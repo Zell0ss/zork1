@@ -105,43 +105,61 @@ Each handler can return:
 - `M-NOT-HANDLED` - Continue to next handler
 - `M-FATAL` - Stop all processing
 
-## Common Usage Patterns
+## Common Usage Patterns (Python Pseudocode)
 
 ### Check verb and object
-```zil
-<COND (<AND <VERB? TAKE> <PRSO? LAMP>>
-       <TELL "You take the lamp." CR>
-       <RTRUE>)>
+```python
+# ZIL: <COND (<AND <VERB? TAKE> <PRSO? LAMP>>
+#             <TELL "You take the lamp." CR>
+#             <RTRUE>)>
+
+if PRSA in [VERB_TAKE] and PRSO == LAMP:
+    print("You take the lamp.")
+    return True
 ```
 
 ### Check current location
-```zil
-<COND (<ROOM? WEST-OF-HOUSE EAST-OF-HOUSE>
-       <TELL "You are near the house." CR>)>
+```python
+# ZIL: <COND (<ROOM? WEST-OF-HOUSE EAST-OF-HOUSE>
+#             <TELL "You are near the house." CR>)>
+
+if HERE in [WEST_OF_HOUSE, EAST_OF_HOUSE]:
+    print("You are near the house.")
 ```
 
 ### Check object in winner's inventory
-```zil
-<COND (<IN? ,LAMP ,WINNER>
-       <TELL "You are carrying the lamp." CR>)>
+```python
+# ZIL: <COND (<IN? ,LAMP ,WINNER>
+#             <TELL "You are carrying the lamp." CR>)>
+
+if LAMP.location == WINNER:
+    print("You are carrying the lamp.")
 ```
 
 ### Handle multiple verbs
-```zil
-<COND (<VERB? OPEN UNLOCK>
-       <TELL "The door opens." CR>
-       <FSET ,DOOR ,OPENBIT>
-       <RTRUE>)>
+```python
+# ZIL: <COND (<VERB? OPEN UNLOCK>
+#             <TELL "The door opens." CR>
+#             <FSET ,DOOR ,OPENBIT>
+#             <RTRUE>)>
+
+if PRSA in [VERB_OPEN, VERB_UNLOCK]:
+    print("The door opens.")
+    DOOR.flags.add(OPENBIT)
+    return True
 ```
 
 ### Access global variables
-```zil
-; Comma prefix for global variable access
-<SETG WINNER ,PLAYER>
-<MOVE ,LAMP ,HERE>
+```python
+# ZIL: <SETG WINNER ,PLAYER>
+# ZIL: <MOVE ,LAMP ,HERE>
 
-; Period prefix for local variable access (in function arguments)
-<TELL "You see " D .OBJ>
+WINNER = PLAYER
+LAMP.location = HERE
+
+# Period prefix for local variable access (in function arguments)
+# ZIL: <TELL "You see " D .OBJ>
+print(f"You see {obj.description}")
 ```
 
 ## Notes
